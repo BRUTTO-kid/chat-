@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FLAMES Game</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Poppins,sans-serif;
+  background:linear-gradient(135deg,#ff0066,#6e2cff);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+  color:#fff;
+}
+.card{
+  width:360px;
+  max-width:95vw;
+  background:#1e1e1e;
+  border-radius:25px;
+  padding:20px;
+  box-shadow:0 0 30px rgba(0,0,0,.6);
+  text-align:center;
+}
+h2{
+  margin:10px 0;
+}
+input{
+  width:90%;
+  padding:12px;
+  border-radius:20px;
+  border:none;
+  outline:none;
+  margin:10px 0;
+  font-size:15px;
+}
+input[readonly]{
+  background:#333;
+  color:#aaa;
+}
+button{
+  padding:10px 22px;
+  border-radius:20px;
+  border:none;
+  background:#6e2cff;
+  color:#fff;
+  font-weight:bold;
+  cursor:pointer;
+  margin-top:12px;
+}
+.result{
+  margin-top:20px;
+  font-size:22px;
+  font-weight:bold;
+  animation:pop .5s ease;
+}
+.pickup{
+  margin-top:10px;
+  font-size:14px;
+  color:#ccc;
+  line-height:1.4;
+}
+@keyframes pop{
+  0%{transform:scale(.5);opacity:0;}
+  100%{transform:scale(1);opacity:1;}
+}
+.emoji{
+  font-size:42px;
+  margin-top:8px;
+}
+.small{
+  font-size:13px;
+  color:#bbb;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>🔥 FLAMES Game 🔥</h2>
+  <div class="small">NAZTRO ❤️ vs Someone 😏</div>
+
+  <!-- FIXED NAME -->
+  <input value="NAZTRO" readonly>
+
+  <!-- USER INPUT -->
+  <input id="name2" placeholder="Enter  name 😌">
+
+  <button onclick="play()">Check 🔮</button>
+
+  <div class="result" id="result"></div>
+  <div class="emoji" id="emoji"></div>
+  <div class="pickup" id="pickup"></div>
+</div>
+
+<script>
+function play(){
+  const fixedName = "naztro"; // FIXED
+  let other = document.getElementById("name2").value
+              .toLowerCase()
+              .replace(/\s/g,"");
+
+  if(!other){
+    alert("Mattu name type cheyyu 😅");
+    return;
+  }
+
+  let a = fixedName.split("");
+  let b = other.split("");
+
+  for(let i=0;i<a.length;i++){
+    for(let j=0;j<b.length;j++){
+      if(a[i] === b[j]){
+        a[i] = "";
+        b[j] = "";
+        break;
+      }
+    }
+  }
+
+  let count = a.join("").length + b.join("").length;
+  const flames = ["Friends","Love","Affection","Marriage","Enemy","Sister"];
+  const result = flames[(count - 1) % flames.length];
+
+  const emojiMap = {
+    Friends:"🤝",
+    Love:"❤️",
+    Affection:"🥰",
+    Marriage:"💍",
+    Enemy:"😈",
+    Sister:"👫"
+  };
+
+  const pickupLine = {
+    Friends: "Namukk rand perum best friends aayi thudangiyaal mathi… bakki ellam fate nokkikolum 🤝",
+    Love: "NAZTRO ❤️ ninne kandappol thanne manasilayi… ith just FLAMES alla, ith feeling aanu 😌",
+    Affection: "Nammal rand perum oru special bond aanu… sneham slowly love aavum 🥰",
+    Marriage: "Alert 🚨 Future-il NAZTRO + nee 💍 wedding invitation ready aakki vecho 😉",
+    Enemy: "Hmm 😈 nammal rand perum opposite poles aanu… paksha sparks undu 🔥",
+    Sister: "Relax 😅 nammal safe zone-il aanu… pure care & respect only 👭"
+  };
+
+  document.getElementById("result").innerText = result;
+  document.getElementById("emoji").innerText = emojiMap[result];
+  document.getElementById("pickup").innerText = pickupLine[result];
+}
+</script>
+
+</body>
+</html>

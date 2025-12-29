@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Instagram DM Style Chat Game</title>
+
+<style>
+body{
+  margin:0;
+  font-family:Poppins,sans-serif;
+  background:#121212;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+.chat-container{
+  width:360px;
+  max-width:95vw;
+  height:640px;
+  border-radius:30px;
+  background:#1e1e1e;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  box-shadow:0 0 20px rgba(255,0,100,0.4);
+}
+.header{
+  padding:10px 15px;
+  background:#262626;
+  color:#fff;
+  font-weight:bold;
+  display:flex;
+  align-items:center;
+}
+.header img{
+  width:36px;
+  height:36px;
+  border-radius:50%;
+  margin-right:10px;
+}
+.messages{
+  flex:1;
+  padding:10px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+}
+.message{
+  max-width:70%;
+  margin:5px 0;
+  padding:10px 14px;
+  border-radius:20px;
+  word-wrap:break-word;
+  line-height:1.4;
+  opacity:0;
+  transition: opacity 0.5s;
+}
+.message.show{
+  opacity:1;
+}
+.message.you{
+  align-self:flex-end;
+  background:#6e2cff;
+  color:#fff;
+  border-bottom-right-radius:0;
+}
+.message.friend{
+  align-self:flex-start;
+  background:#333;
+  color:#fff;
+  border-bottom-left-radius:0;
+}
+button.choice{
+  margin:5px;
+  padding:8px 14px;
+  border-radius:20px;
+  border:none;
+  cursor:pointer;
+  background:#6e2cff;
+  color:#fff;
+  font-weight:bold;
+}
+input{
+  padding:8px 12px;
+  border-radius:20px;
+  border:none;
+  outline:none;
+  width:200px;
+}
+#sendBtn{
+  margin-left:6px;
+}
+.typing{
+  font-style:italic;
+  color:#aaa;
+}
+::-webkit-scrollbar{
+  width:6px;
+}
+::-webkit-scrollbar-thumb{
+  background:#6e2cff;
+}
+</style>
+</head>
+
+<body>
+
+<div class="chat-container">
+  <div class="header">
+    <img src="love.png">
+    <span>NAZTRO 💬</span>
+  </div>
+  <div class="messages" id="messages"></div>
+</div>
+
+<script>
+const messages = document.getElementById("messages");
+let userName = "";
+let gender = "";
+
+function addMessage(text,sender="friend"){
+  const div = document.createElement("div");
+  div.className = "message " + sender;
+  div.textContent = text;
+  messages.appendChild(div);
+  setTimeout(()=>div.classList.add("show"),50);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+function typing(sender="friend",time=1200){
+  return new Promise(res=>{
+    const t = document.createElement("div");
+    t.className="message "+sender+" typing";
+    t.textContent="typing...";
+    messages.appendChild(t);
+    messages.scrollTop = messages.scrollHeight;
+    setTimeout(()=>{
+      t.remove();
+      res();
+    },time);
+  });
+}
+
+function userReply(text){
+  return new Promise(res=>{
+    typing("you",600).then(()=>{
+      addMessage(text,"you");
+      res();
+    });
+  });
+}
+
+/* START CHAT */
+async function start(){
+  await typing();
+  choice(["Hi","Halo"],async val=>{
+    await userReply(val);
+    askName();
+  });
+}
+
+/* NAME */
+async function askName(){
+  await typing();
+  addMessage("hi What's your name?");
+  const box = document.createElement("div");
+  box.style.margin="10px";
+  box.innerHTML=`
+    <input id="nameInput" placeholder="Type your name">
+    <button id="sendBtn" class="choice">Send</button>
+  `;
+  messages.appendChild(box);
+  messages.scrollTop = messages.scrollHeight;
+
+  box.querySelector("#sendBtn").onclick=async()=>{
+    userName = box.querySelector("input").value.trim();
+    if(!userName) return;
+    box.remove();
+    await userReply(userName);
+    askGender();
+  };
+}
+
+/* GENDER */
+async function askGender(){
+  await typing();
+  addMessage("Male or Female?");
+  choice(["Male","Female"],async val=>{
+    gender = val;
+    await userReply(val);
+    if(val==="Male"){
+      await typing();
+      addMessage("Girls only zone 😌");
+    }
+    gameAsk();
+  });
+}
+
+/* GAME ASK */
+async function gameAsk(){
+  await typing();
+  addMessage("Namakk oru game kalichallo 🎮");
+  choice(["Yes","No"],async val=>{
+    await userReply(val);
+    if(val==="Yes"){
+      addMessage("Game loading...");
+      setTimeout(()=>{
+        window.location.href =
+        "game.html?name="+encodeURIComponent(userName)+"&gender="+gender;
+      },1500);
+    }else{
+      addMessage("Pinne enthina vanne 😏");
+    }
+  });
+}
+
+/* BUTTON GENERATOR */
+function choice(arr,callback){
+  const div=document.createElement("div");
+  div.style.margin="10px";
+  arr.forEach(v=>{
+    const b=document.createElement("button");
+    b.className="choice";
+    b.textContent=v;
+    b.onclick=()=>{div.remove();callback(v);};
+    div.appendChild(b);
+  });
+  messages.appendChild(div);
+  messages.scrollTop = messages.scrollHeight;
+}
+
+start();
+</script>
+
+</body>
+</html>
